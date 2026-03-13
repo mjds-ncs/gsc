@@ -10,6 +10,17 @@
     <!-- Tab Icon -->
     <link rel="icon" type="image/svg+xml" href="../icons/buildings.svg">
 </head>
+<style>
+    .card:hover{
+transform: scale(1.03);
+transition: 0.2s;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+</style>
+
+ <a href="../admin/dashboard.php" class="btn btn-outline-dark rounded-3 mt-2 mb-3">
+        ← Back
+    </a>
 <body>
 <div class="container mt-5">
     <h1 class="text-center mb-4">GOOD SAMARITAN COLLEGES BUILDINGS</h1>

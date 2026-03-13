@@ -14,25 +14,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $descriptions = $_POST['description'];
     $quantities = $_POST['quantity'];
     $conditions = $_POST['condition'];
+    $sizes = $_POST['size'] ?? [];
+    $colors = $_POST['color'] ?? [];
 
-    $stmt = $conn->prepare("INSERT INTO peregrin_2 
-        (room, category, type, code, description, quantity, `condition`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)");
+   $stmt = $conn->prepare("UPDATE peregrin_2 SET 
+    room=?, category=?, type=?, code=?, description=?, quantity=?, `condition`=?, size=?, color=? 
+    WHERE id=?");   
+$room = $_POST['room'];
+$category = $_POST['category'];
+$type = $_POST['type'];
+$code = $_POST['code'];
+$description = $_POST['description'];
+$quantity = $_POST['quantity'];
+$condition = $_POST['condition'];
+$size = $_POST['size'] ?? null;   // now a variable
+$color = $_POST['color'] ?? null; // now a variable
+$id = $_POST['id'];
 
-    for ($i = 0; $i < count($categories); $i++) {
-        $stmt->bind_param(
-            "sssssis",
-            $room,
-            $categories[$i],
-            $types[$i],
-            $codes[$i],
-            $descriptions[$i],
-            $quantities[$i],
-            $conditions[$i]
-        );
-        $stmt->execute();
-    }
-
+// Bind parameters using variables
+$stmt->bind_param(
+    "sssssisssi",
+    $room,
+    $category,
+    $type,
+    $code,
+    $description,
+    $quantity,
+    $condition,
+    $size,
+    $color,
+    $id
+);
     $stmt->close();
     header("Location: ".$_SERVER['PHP_SELF']);
     exit();
@@ -51,25 +63,31 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-
 /* =========================
    UPDATE
 ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 
+    $size = $_POST['size'] ?? null;
+    $color = $_POST['color'] ?? null;
+    $type = $_POST['type'] ?: ($_POST['category'] === 'Blinds' ? 'Blinds' : '');
+
     $stmt = $conn->prepare("UPDATE peregrin_2 SET 
-        room=?, category=?, type=?, code=?, description=?, quantity=?, `condition`=? 
+        room=?, category=?, type=?, code=?, description=?, quantity=?, `condition`=?, size=?, color=? 
         WHERE id=?");   
+
     $stmt->bind_param(
-        "sssssisi",
+        "sssssisssi",
         $_POST['room'],
         $_POST['category'],
-        $_POST['type'],
+        $type,
         $_POST['code'],
         $_POST['description'],
         $_POST['quantity'],
         $_POST['condition'],
-        $_POST['id']   // ✅ this must match hidden input
+        $size,
+        $color,
+        $_POST['id']
     );
 
     $stmt->execute();
@@ -147,11 +165,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 $result = $conn->query("SELECT * FROM peregrin_2 ORDER BY building DESC");
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+        // Determine what to display for "Type"
+       $displayType = ($row['category'] === 'Blinds') 
+    ? trim($row['size'] . ' / ' . $row['color'], " /") 
+    : $row['type'];
+
         echo "<tr>
         <td>{$row['id']}</td>
         <td>{$row['room']}</td>
         <td>{$row['category']}</td>
-        <td>{$row['type']}</td>
+        <td>{$displayType}</td>
         <td>{$row['code']}</td>
         <td>{$row['description']}</td>
         <td>{$row['quantity']}</td>
@@ -384,6 +407,8 @@ function addItem() {
     item.querySelectorAll('input, textarea').forEach(input => input.value = '');
     container.appendChild(item);
 }
+
+
 
 // Auto-fill edit modal
 document.querySelectorAll('.editBtn').forEach(button => {
