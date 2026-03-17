@@ -48,11 +48,9 @@ body{
     color:#0d6efd;
 }
 
-.logout-btn{
-    color:#ffdddd !important;
-}
-
 .logout-btn:hover{
+    background-color:#dc3545 !important;
+    border-color:#dc3545 !important;
     color:white !important;
 }
 
@@ -90,7 +88,7 @@ Admin Dashboard
 
 <!-- Profile -->
 <li class="nav-item mx-3">
-<a class="nav-link d-flex align-items-center" href="../admin/profile.php">
+<a class="nav-link d-flex align-items-center" href="../user/user-admin.php">
 <div class="profile-icon">
 👤
 </div>

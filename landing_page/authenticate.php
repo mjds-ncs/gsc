@@ -1,18 +1,18 @@
 <?php
 session_start();
-require_once __DIR__ . "/../db.php";  // safest way
-
-if (!isset($conn)) {
-    die("Database connection not found.");
-}
+require_once __DIR__ . "/../db.php";
 
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-$sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM users WHERE username=? AND password=?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+
+$result = $stmt->get_result();
 
 if ($result->num_rows == 1) {
+
     $row = $result->fetch_assoc();
 
     $_SESSION['username'] = $row['username'];
@@ -23,6 +23,7 @@ if ($result->num_rows == 1) {
     } else {
         header("Location: ../clerk/dashboard.php");
     }
+
 } else {
     echo "Invalid login credentials!";
 }

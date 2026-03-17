@@ -24,7 +24,7 @@ background:#f8f9fa;
 
 <body>
     
-<div class="card card-hover shadow p-4 mb-4">
+<div class="card  shadow p-4 mb-4">
 
 <div class="container mt-4">
 <h1 class="text-center mb-4">GOOD SAMARITAN COLLEGES ACADEMIC</h1>
